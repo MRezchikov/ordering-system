@@ -1,0 +1,21 @@
+plugins {
+    id 'idea'
+    id 'maven-publish'
+}
+
+idea{
+    project {
+        languageLevel = 11
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
