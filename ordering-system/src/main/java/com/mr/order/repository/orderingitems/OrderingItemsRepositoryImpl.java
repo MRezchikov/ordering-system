@@ -4,8 +4,6 @@ import com.mr.order.entity.OrderingItems;
 import com.mr.order.exeption.DatabaseInteractionException;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +21,12 @@ public class OrderingItemsRepositoryImpl implements OrderingItemsRepository {
     private static final String ITEM_COUNT = "item_count";
     private static final String ITEM_PRICE = "item_price";
 
+    private static final long BATCH_SIZE = 100;
+
     @Override
     public OrderingItems save(Connection connection, OrderingItems orderingItems) {
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(ORDERING_ITEMS_INSERT_QUERY)) {
+        try (var preparedStatement = connection.prepareStatement(ORDERING_ITEMS_INSERT_QUERY)) {
             preparedStatement.setLong(1, orderingItems.getOrderingId());
             preparedStatement.setString(2, orderingItems.getItemName());
             preparedStatement.setInt(3, orderingItems.getItemCount());
@@ -42,7 +42,7 @@ public class OrderingItemsRepositoryImpl implements OrderingItemsRepository {
     @Override
     public void saveAll(Connection connection, List<OrderingItems> orderingItems) {
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(ORDERING_ITEMS_INSERT_QUERY)) {
+        try (var preparedStatement = connection.prepareStatement(ORDERING_ITEMS_INSERT_QUERY)) {
             for (int i = 0; i < orderingItems.size(); i++) {
                 OrderingItems orderingItem = orderingItems.get(i);
                 preparedStatement.setLong(1, orderingItem.getOrderingId());
@@ -51,7 +51,7 @@ public class OrderingItemsRepositoryImpl implements OrderingItemsRepository {
                 preparedStatement.setDouble(4, orderingItem.getItemPrice());
 
                 preparedStatement.addBatch();
-                if (i % 100 == 0) {
+                if (i % BATCH_SIZE == 0) {
                     preparedStatement.executeBatch();
                 }
             }
@@ -63,19 +63,14 @@ public class OrderingItemsRepositoryImpl implements OrderingItemsRepository {
     }
 
     @Override
-    public Optional<OrderingItems> findById(Connection connection, long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<OrderingItems> findByOrderingId(Connection connection, long id) {
+    public List<OrderingItems> findByOrderingId(Connection connection, Long id) {
 
         List<OrderingItems> orderingItems = new ArrayList<>();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(ORDERING_ITEMS_GET_BY_ORDERING_ID)) {
+        try (var preparedStatement = connection.prepareStatement(ORDERING_ITEMS_GET_BY_ORDERING_ID)) {
             preparedStatement.setLong(1, id);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            try (var resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     OrderingItems orderingItemsFromDb = OrderingItems.builder()
                             .id(resultSet.getLong(ORDERING_ITEMS_ID))
@@ -100,7 +95,7 @@ public class OrderingItemsRepositoryImpl implements OrderingItemsRepository {
     @Override
     public Optional<OrderingItems> updateItemCount(Connection connection, OrderingItems orderingItems) {
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(ORDERING_ITEMS_UPDATES_ITEMS_COUNT)) {
+        try (var preparedStatement = connection.prepareStatement(ORDERING_ITEMS_UPDATES_ITEMS_COUNT)) {
             preparedStatement.setInt(1, orderingItems.getItemCount());
             preparedStatement.setLong(2, orderingItems.getId());
             preparedStatement.executeUpdate();

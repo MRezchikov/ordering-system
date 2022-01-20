@@ -2,17 +2,17 @@ package com.mr.order.entity;
 
 public class OrderingItems {
 
-    private long id;
-    private long orderingId;
+    private Long id;
+    private Long orderingId;
     private String itemName;
     private int itemCount;
     private double itemPrice;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public long getOrderingId() {
+    public Long getOrderingId() {
         return orderingId;
     }
 
@@ -41,12 +41,12 @@ public class OrderingItems {
         private Builder() {
         }
 
-        public Builder id(long id) {
+        public Builder id(Long id) {
             OrderingItems.this.id=id;
             return this;
         }
 
-        public Builder orderingId(long orderingId) {
+        public Builder orderingId(Long orderingId) {
             OrderingItems.this.orderingId = orderingId;
             return this;
         }
@@ -78,12 +78,12 @@ public class OrderingItems {
 
         OrderingItems that = (OrderingItems) o;
 
-        return id == that.id;
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        return id.hashCode();
     }
 
     @Override

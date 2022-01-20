@@ -1,21 +1,52 @@
 plugins {
     id 'idea'
-    id 'maven-publish'
+    id "io.spring.dependency-management" version "1.0.10.RELEASE"
 }
 
-idea{
+idea {
     project {
-        languageLevel = 11
+        languageLevel = 17
     }
     module {
         downloadJavadoc = true
         downloadSources = true
     }
-
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
+allprojects {
+    group "com.mr"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    apply plugin: "io.spring.dependency-management"
+    dependencyManagement {
+        dependencies {
+            imports {
+                mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.4")
+            }
+            dependency("org.testcontainers:junit-jupiter:1.15.3")
+            dependency("org.testcontainers:postgresql:1.15.3")
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+        }
+        resolutionStrategy {
+            force("net.java.dev.jna:jna:5.8.0")
+        }
+    }
 }
 
+//print versions from BOM
+task managedVersions {
+    doLast {
+        dependencyManagement.managedVersions.each {
+            println it
+        }
+    }
+}

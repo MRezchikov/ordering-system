@@ -5,9 +5,9 @@ public class OrderingItemsUpdatingCountRequest {
     private final long orderingItemsId;
     private final int itemCount;
 
-    public OrderingItemsUpdatingCountRequest(long orderingItemsId, int countItem) {
+    public OrderingItemsUpdatingCountRequest(long orderingItemsId, int itemCount) {
         this.orderingItemsId = orderingItemsId;
-        this.itemCount = countItem;
+        this.itemCount = itemCount;
     }
 
     public long getOrderingItemsId() {

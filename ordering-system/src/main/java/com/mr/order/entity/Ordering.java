@@ -3,10 +3,11 @@ package com.mr.order.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Ordering {
 
-    private long id;
+    private Long id;
     private String username;
     private boolean done;
     private LocalDateTime updatedAt;
@@ -15,11 +16,11 @@ public class Ordering {
     private Ordering() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -53,7 +54,7 @@ public class Ordering {
         private Builder() {
         }
 
-        public Builder id(long id) {
+        public Builder id(Long id) {
             Ordering.this.id = id;
             return this;
         }
@@ -90,12 +91,12 @@ public class Ordering {
 
         Ordering ordering = (Ordering) o;
 
-        return id == ordering.id;
+        return id.equals(ordering.id);
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        return id.hashCode();
     }
 
     @Override

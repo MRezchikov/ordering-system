@@ -11,7 +11,7 @@ public interface OrderingItemsRepository extends Repository<OrderingItems> {
 
     void saveAll(Connection connection, List<OrderingItems> orderingItems);
 
-    List<OrderingItems> findByOrderingId(Connection connection, long id);
+    List<OrderingItems> findByOrderingId(Connection connection, Long id);
 
     Optional<OrderingItems> updateItemCount(Connection connection, OrderingItems orderingItems);
 }

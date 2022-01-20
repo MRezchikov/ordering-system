@@ -4,8 +4,11 @@ import com.mr.order.entity.Ordering;
 import com.mr.order.repository.Repository;
 
 import java.sql.Connection;
+import java.util.Optional;
 
 public interface OrderingRepository extends Repository<Ordering> {
 
-    void updateDoneToTrue(Connection connection, boolean done);
+    Optional<Ordering> findById(Connection connection, Long id);
+
+    boolean updateDoneToTrue(Connection connection, boolean done);
 }

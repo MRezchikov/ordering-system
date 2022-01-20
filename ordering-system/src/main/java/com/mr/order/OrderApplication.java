@@ -1,45 +1,50 @@
 package com.mr.order;
 
+import com.mr.order.dto.OrderingItemsUpdatingCountRequest;
+import com.mr.order.entity.Ordering;
+import com.mr.order.entity.OrderingItems;
 import com.mr.order.service.OrderService;
 import com.mr.order.service.OrderServiceImpl;
-import com.mr.order.util.DatabaseProperty;
 import com.mr.order.util.connection.ConnectionPool;
+import com.mr.order.util.transaction.TransactionRunnerJdbc;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderApplication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("OrderApplication");
 
     public static void main(String[] args) {
 
         LOGGER.info("Database schema migration");
-        flyWayMigrate();
 
-        ConnectionPool connectionPool = new ConnectionPool();
-        DataSource dataSource = connectionPool.getDataSource();
+        var connectionPool = new ConnectionPool();
+        var dataSource = connectionPool.createConnectionPoolAndGetDataSource();
+        flyWayMigrate(dataSource);
+        var transactionRunner = new TransactionRunnerJdbc(dataSource);
 
-        try (Connection connection = dataSource.getConnection()) {
+        var orderService = new OrderServiceImpl(transactionRunner);
 
-            OrderService orderService = new OrderServiceImpl();
+/*            orderService.findWithOrderingItemsById(1L)
+                    .ifPresent(System.out::println);
 
-/*            orderService.findWithOrderingItemsById(connection, 1L)
-                    .ifPresent(System.out::println);*/
-
-            /*OrderingItems orderingItems1 = OrderingItems.builder()
-                    .itemName("Smth1")
+            OrderingItems orderingItems1 = OrderingItems.builder()
+                    .itemName("PC")
                     .itemCount(2)
-                    .itemPrice(599.99)
+                    .itemPrice(1999.99)
                     .build();
 
             OrderingItems orderingItems2 = OrderingItems.builder()
-                    .itemName("Smth2")
+                    .itemName("Laptop")
                     .itemCount(2)
-                    .itemPrice(233.99)
+                    .itemPrice(2999.99)
                     .build();
 
             List<OrderingItems> orderingItemsList = new ArrayList<>();
@@ -47,30 +52,29 @@ public class OrderApplication {
             orderingItemsList.add(orderingItems2);
 
             Ordering test2 = Ordering.builder()
-                    .username("test2")
+                    .username("Aleksei")
                     .done(true)
                     .updatedAt(LocalDateTime.now())
                     .orderingItems(orderingItemsList)
                     .build();
 
-            orderService.saveOrder(connection, test2);*/
+            orderService.saveOrder(test2);
 
-        } catch (Exception e) {
-            LOGGER.error("Unknown exception while calling service methods");
-            throw new RuntimeException("Unexpected exception", e);
-        }
+        boolean b = orderService.updateDoneToTrue();
+        LOGGER.info("Updating done {} ", b);*/
+
+/*        OrderingItemsUpdatingCountRequest orderingItemsUpdatingCountRequest =
+                new OrderingItemsUpdatingCountRequest(8, 20);
+
+        orderService.updateOrderingItemsCountByOrderingId(-5L, orderingItemsUpdatingCountRequest);*/
+
     }
 
-    private static void flyWayMigrate() {
+    public static void flyWayMigrate(DataSource dataSource) {
 
-        DatabaseProperty dbProperty = DatabaseProperty.getDatabaseProperty();
         LOGGER.info("Db migration starting");
         Flyway.configure()
-                .dataSource(
-                        dbProperty.getUrl(),
-                        dbProperty.getUsername(),
-                        dbProperty.getPassword()
-                )
+                .dataSource(dataSource)
                 .load()
                 .migrate();
         LOGGER.info("Db migration finished");
