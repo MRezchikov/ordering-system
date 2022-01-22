@@ -10,5 +10,5 @@ public interface OrderingRepository extends Repository<Ordering> {
 
     Optional<Ordering> findById(Connection connection, Long id);
 
-    boolean updateDoneToTrue(Connection connection, boolean done);
+    void updateDoneToTrue(Connection connection, boolean done);
 }

@@ -14,5 +14,5 @@ public interface OrderService {
 
     Optional<Ordering> findWithOrderingItemsById(Long id);
 
-    boolean updateDoneToTrue();
+    void updateDoneToTrue();
 }

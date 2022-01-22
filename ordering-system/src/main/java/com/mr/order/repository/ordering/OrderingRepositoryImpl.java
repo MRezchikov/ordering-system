@@ -4,7 +4,6 @@ import com.mr.order.entity.Ordering;
 import com.mr.order.exeption.DatabaseInteractionException;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -24,29 +23,31 @@ public class OrderingRepositoryImpl implements OrderingRepository {
     @Override
     public Ordering save(Connection connection, Ordering ordering) {
 
+
         try (var preparedStatement = connection.prepareStatement(
                 ORDERING_INSERT_QUERY, RETURN_GENERATED_KEYS)
         ) {
             preparedStatement.setString(1, ordering.getUsername());
             preparedStatement.setBoolean(2, ordering.getDone());
             preparedStatement.setTimestamp(3, Timestamp.valueOf(ordering.getUpdatedAt()));
-            int affectedRows = preparedStatement.executeUpdate();
+            var affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows == 0) {
                 throw new SQLException("Creating user failed, no rows affected.");
             }
 
+            Long id = null;
             try (var generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return Ordering.builder()
-                            .id(generatedKeys.getLong(ORDERING_ID))
-                            .username(ordering.getUsername())
-                            .done(ordering.getDone())
-                            .updatedAt(ordering.getUpdatedAt())
-                            .build();
+                    id = generatedKeys.getLong(ORDERING_ID);
                 }
 
-                return ordering;
+                return Ordering.builder()
+                        .id(id)
+                        .username(ordering.getUsername())
+                        .done(ordering.getDone())
+                        .updatedAt(ordering.getUpdatedAt())
+                        .build();
             } catch (SQLException e) {
                 throw new DatabaseInteractionException("Some error was occurred while saving ordering ", e);
             }
@@ -60,7 +61,7 @@ public class OrderingRepositoryImpl implements OrderingRepository {
 
         try (var preparedStatement = connection.prepareStatement(ORDERING_FIND_BY_ID_QUERY)) {
             preparedStatement.setLong(1, id);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            try (var resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     Ordering orderingFromDb = Ordering.builder()
                             .id(resultSet.getLong(ORDERING_ID))
@@ -80,17 +81,11 @@ public class OrderingRepositoryImpl implements OrderingRepository {
     }
 
     @Override
-    public boolean updateDoneToTrue(Connection connection, boolean done) {
+    public void updateDoneToTrue(Connection connection, boolean done) {
 
         try (var preparedStatement = connection.prepareStatement(ORDERING_UPDATE_DONE_TO_TRUE)) {
             preparedStatement.setBoolean(1, done);
-            int affectedRow = preparedStatement.executeUpdate();
-
-            if (affectedRow != 0) {
-                return true;
-            }
-            return false;
-
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseInteractionException("Some error was occurred while updating done", e);
         }

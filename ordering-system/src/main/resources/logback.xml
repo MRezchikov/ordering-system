@@ -5,6 +5,10 @@
         </encoder>
     </appender>
 
+    <logger name="com.mr.order.OrderApplication" level="info" additivity="true">
+        <appender-ref ref="APP_LOG" />
+    </logger>
+
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>

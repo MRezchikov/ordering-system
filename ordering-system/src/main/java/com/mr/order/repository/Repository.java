@@ -1,7 +1,6 @@
 package com.mr.order.repository;
 
 import java.sql.Connection;
-import java.util.Optional;
 
 public interface Repository<T> {
 

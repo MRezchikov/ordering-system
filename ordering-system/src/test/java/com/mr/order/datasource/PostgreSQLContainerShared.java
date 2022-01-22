@@ -1,4 +1,4 @@
-package com.mr.order.repository;
+package com.mr.order.datasource;
 
 import org.flywaydb.core.Flyway;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -25,7 +25,7 @@ public class PostgreSQLContainerShared extends PostgreSQLContainer<PostgreSQLCon
         flyWayMigrate(container.getJdbcUrl(), container.getUsername(), container.getPassword());
     }
 
-    private void flyWayMigrate(String url, String username, String password) {
+    public void flyWayMigrate(String url, String username, String password) {
         Flyway.configure()
                 .dataSource(url, username, password)
                 .load()
