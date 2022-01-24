@@ -1,3 +1,5 @@
 rootProject.name = 'order-system'
 
 include 'ordering-system'
+include 'atm-simulator'
+
