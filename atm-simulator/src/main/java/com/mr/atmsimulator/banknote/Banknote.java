@@ -1,13 +1,16 @@
-package com.mr.atmsymulator.banknote;
-
-import java.util.Objects;
+package com.mr.atmsimulator.banknote;
 
 public class Banknote {
 
     private long count;
-    private final Integer denomination;
+    private int denomination;
 
-    public Banknote(Integer denomination) {
+    public Banknote(int denomination) {
+        this.denomination = denomination;
+    }
+
+    public Banknote(long count, int denomination) {
+        this.count = count;
         this.denomination = denomination;
     }
 
@@ -15,7 +18,7 @@ public class Banknote {
         return count;
     }
 
-    public Integer getDenomination() {
+    public int getDenomination() {
         return denomination;
     }
 
@@ -26,12 +29,12 @@ public class Banknote {
 
         Banknote banknote = (Banknote) o;
 
-        return Objects.equals(denomination, banknote.denomination);
+        return denomination == banknote.denomination;
     }
 
     @Override
     public int hashCode() {
-        return denomination != null ? denomination.hashCode() : 0;
+        return denomination;
     }
 
     @Override

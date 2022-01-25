@@ -5,13 +5,22 @@ plugins {
 group 'com.mr'
 version '1.0'
 
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    dependencies {
+        implementation 'ch.qos.logback:logback-classic'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+        testImplementation 'org.junit.jupiter:junit-jupiter-params'
+        testImplementation 'org.assertj:assertj-core'
+        testImplementation 'org.mockito:mockito-junit-jupiter'
+    }
 }
 
 test {
