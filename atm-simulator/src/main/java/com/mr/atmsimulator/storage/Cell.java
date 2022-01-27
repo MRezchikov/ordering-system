@@ -25,6 +25,24 @@ public class Cell {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Cell cell = (Cell) o;
+
+        if (counter != cell.counter) return false;
+        return denomination == cell.denomination;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (counter ^ (counter >>> 32));
+        result = 31 * result + denomination.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Cell{" +
                 "counter=" + counter +

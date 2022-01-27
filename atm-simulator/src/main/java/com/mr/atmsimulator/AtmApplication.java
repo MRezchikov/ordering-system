@@ -49,6 +49,7 @@ public class AtmApplication {
         FirstAtm firstAtm = new FirstAtm(takingAlgorithm, givingAlgorithm, moneyStorage);
         final Map<Denomination, Cell> denominationCellMap = firstAtm.takeBanknotes(banknotes);
         final Map<Banknote, Integer> banknoteIntegerMap = firstAtm.giveBanknotes(requestedCash);
+        System.out.println("ddddddddddddddddddddddddddddd " + banknoteIntegerMap);
         final long balanceCash = firstAtm.getBalanceCash();
     }
 }
