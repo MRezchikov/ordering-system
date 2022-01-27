@@ -20,6 +20,7 @@ import static com.mr.atmsimulator.atm.denomination.Denomination.FIVE_THOUSAND;
 import static com.mr.atmsimulator.atm.denomination.Denomination.ONE_HUNDRED;
 import static com.mr.atmsimulator.atm.denomination.Denomination.ONE_THOUSAND;
 import static com.mr.atmsimulator.atm.denomination.Denomination.TEN;
+import static com.mr.atmsimulator.testutil.TestUtil.populateAtm;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FirstAtmTest {
@@ -66,5 +67,31 @@ class FirstAtmTest {
                 .hasSize(6)
                 .containsKeys(FIVE_THOUSAND, ONE_THOUSAND, FIVE_HUNDRED, ONE_HUNDRED, FIFTY, TEN)
                 .containsValues(cell5000, cell1000, cell500, cell100, cell50, cell10);
+    }
+
+    @Test
+    void shouldReturnBanknoteIntegerMapAndReturnCorrectCashBalance() {
+
+        long expectedCash = 1_549_130L;
+
+        populateAtm(banknotes, firstAtm);
+
+        var requestedCash = 116_870L;
+
+        Map<Banknote, Integer> banknoteIntegerMap = firstAtm.giveBanknotes(requestedCash);
+        System.out.println(banknoteIntegerMap);
+
+        assertThat(banknoteIntegerMap)
+                .isNotEmpty()
+                .hasSize(6)
+                .containsKeys(new Banknote(FIVE_THOUSAND),
+                        new Banknote(ONE_THOUSAND),
+                        new Banknote(FIVE_HUNDRED),
+                        new Banknote(ONE_HUNDRED),
+                        new Banknote(FIFTY),
+                        new Banknote(TEN))
+                .containsValues(23, 1, 1, 3, 1, 2);
+
+        assertThat(firstAtm.getBalanceCash()).isEqualTo(expectedCash);
     }
 }

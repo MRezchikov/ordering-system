@@ -33,7 +33,7 @@ public class AtmApplication {
 
         var requestedCash = 116_870L;
 
-        Map<Banknote,Integer> banknotes = new TreeMap<>((k1, k2) ->
+        Map<Banknote, Integer> banknotes = new TreeMap<>((k1, k2) ->
                 k2.getDenomination().getValue().compareTo(k1.getDenomination().getValue()));
         banknotes.put(new Banknote(FIVE_THOUSAND), 100);
         banknotes.put(new Banknote(ONE_THOUSAND), 100);
@@ -47,9 +47,8 @@ public class AtmApplication {
         GivingAlgorithm givingAlgorithm = new FirstGivingAlgorithm(moneyStorage);
 
         FirstAtm firstAtm = new FirstAtm(takingAlgorithm, givingAlgorithm, moneyStorage);
-        final Map<Denomination, Cell> denominationCellMap = firstAtm.takeBanknotes(banknotes);
-        final Map<Banknote, Integer> banknoteIntegerMap = firstAtm.giveBanknotes(requestedCash);
-        System.out.println("ddddddddddddddddddddddddddddd " + banknoteIntegerMap);
-        final long balanceCash = firstAtm.getBalanceCash();
+        firstAtm.takeBanknotes(banknotes);
+        firstAtm.giveBanknotes(requestedCash);
+        firstAtm.getBalanceCash();
     }
 }
