@@ -1,26 +1,24 @@
 package com.mr.atmsimulator.atm.strategy;
 
+import com.mr.atmsimulator.atm.denomination.Denomination;
 import com.mr.atmsimulator.banknote.Banknote;
+import com.mr.atmsimulator.storage.Cell;
 
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class FirstTakingAlgorithm implements TakingAlgorithm {
 
-    private final List<Banknote> banknotes;
-
-    public FirstTakingAlgorithm(List<Banknote> banknotes) {
-        this.banknotes = banknotes;
-    }
-
     @Override
-    public long takeBanknotes() {
+    public Map<Denomination, Cell> processAcceptedBanknotes(Map<Banknote, Integer> banknotes) {
 
-        long money = 0;
+        Map<Denomination, Cell> denominationCellMap = new TreeMap<>();
 
-        for (Banknote banknote : banknotes) {
-            money = money + banknote.getCount() * banknote.getDenomination();
-        }
+        banknotes.forEach((key, value) -> {
+            Denomination denomination = key.getDenomination();
+            denominationCellMap.put(denomination, new Cell(value, denomination));
+        });
 
-        return money;
+        return denominationCellMap;
     }
 }

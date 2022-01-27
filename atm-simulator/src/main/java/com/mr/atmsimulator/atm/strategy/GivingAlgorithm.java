@@ -2,9 +2,9 @@ package com.mr.atmsimulator.atm.strategy;
 
 import com.mr.atmsimulator.banknote.Banknote;
 
-import java.util.List;
+import java.util.Map;
 
 public interface GivingAlgorithm {
 
-    List<Banknote> giveBanknotes();
+    Map<Banknote, Integer> giveBanknotes(long requestedCash);
 }

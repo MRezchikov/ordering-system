@@ -1,6 +1,5 @@
-package com.mr.atmsimulator;
+package com.mr.atmsimulator.atm;
 
-import com.mr.atmsimulator.atm.FirstAtm;
 import com.mr.atmsimulator.atm.denomination.Denomination;
 import com.mr.atmsimulator.atm.strategy.FirstGivingAlgorithm;
 import com.mr.atmsimulator.atm.strategy.FirstTakingAlgorithm;
@@ -9,9 +8,12 @@ import com.mr.atmsimulator.atm.strategy.TakingAlgorithm;
 import com.mr.atmsimulator.banknote.Banknote;
 import com.mr.atmsimulator.storage.Cell;
 import com.mr.atmsimulator.storage.MoneyStorage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.assertj.core.data.MapEntry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.AbstractMap;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,18 +24,23 @@ import static com.mr.atmsimulator.atm.denomination.Denomination.ONE_HUNDRED;
 import static com.mr.atmsimulator.atm.denomination.Denomination.ONE_THOUSAND;
 import static com.mr.atmsimulator.atm.denomination.Denomination.TEN;
 
-public class AtmApplication {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtmApplication.class);
+class FirstAtmTest {
 
-    public static void main(String[] args) {
+    private Map<Banknote, Integer> banknotes;
+    private MoneyStorage moneyStorage;
+    private TakingAlgorithm takingAlgorithm;
+    private GivingAlgorithm givingAlgorithm;
+    private Atm firstAtm;
 
-        MoneyStorage moneyStorage = new MoneyStorage();
+    @BeforeEach
+    void setUp() {
+        moneyStorage = new MoneyStorage();
         moneyStorage.setBalanceCash(1000_000L);
-
-        var requestedCash = 116_870L;
-
-        Map<Banknote,Integer> banknotes = new TreeMap<>((k1, k2) ->
+        banknotes = new TreeMap<>((k1, k2) ->
                 k2.getDenomination().getValue().compareTo(k1.getDenomination().getValue()));
         banknotes.put(new Banknote(FIVE_THOUSAND), 100);
         banknotes.put(new Banknote(ONE_THOUSAND), 100);
@@ -41,14 +48,19 @@ public class AtmApplication {
         banknotes.put(new Banknote(ONE_HUNDRED), 100);
         banknotes.put(new Banknote(FIFTY), 100);
         banknotes.put(new Banknote(TEN), 100);
+        takingAlgorithm = new FirstTakingAlgorithm();
+        givingAlgorithm = new FirstGivingAlgorithm(moneyStorage);
+        firstAtm= new FirstAtm(takingAlgorithm, givingAlgorithm, moneyStorage);
+    }
 
-        TakingAlgorithm takingAlgorithm = new FirstTakingAlgorithm();
+    @Test
+    void shouldReturnMapDenominationCell() {
 
-        GivingAlgorithm givingAlgorithm = new FirstGivingAlgorithm(moneyStorage);
+        Map<Denomination, Cell> denominationCellMap = firstAtm.takeBanknotes(banknotes);
 
-        FirstAtm firstAtm = new FirstAtm(takingAlgorithm, givingAlgorithm, moneyStorage);
-        final Map<Denomination, Cell> denominationCellMap = firstAtm.takeBanknotes(banknotes);
-        final Map<Banknote, Integer> banknoteIntegerMap = firstAtm.giveBanknotes(requestedCash);
-        final long balanceCash = firstAtm.getBalanceCash();
+        assertThat(denominationCellMap)
+                .isNotEmpty()
+                .hasSize(6)
+                .containsKeys(FIVE_THOUSAND, ONE_THOUSAND, FIVE_HUNDRED, ONE_HUNDRED, FIFTY, TEN);
     }
 }

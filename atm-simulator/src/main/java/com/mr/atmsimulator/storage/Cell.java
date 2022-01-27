@@ -1,26 +1,35 @@
 package com.mr.atmsimulator.storage;
 
-import com.mr.atmsimulator.banknote.Banknote;
+import com.mr.atmsimulator.atm.denomination.Denomination;
 
 public class Cell {
 
-    private final long count;
-    private final Banknote banknote;
+    private long counter;
+    private final Denomination denomination;
 
-    public Cell(long count, Banknote banknote) {
-        this.count = count;
-        this.banknote = banknote;
+    public Cell(long counter, Denomination denomination) {
+        this.counter = counter;
+        this.denomination = denomination;
     }
 
-    public Banknote getBanknote() {
-        return banknote;
+    public long getCounter() {
+        return counter;
+    }
+
+    public Denomination getDenomination() {
+        return denomination;
+    }
+
+    public void setCounter(long counter) {
+        this.counter = counter;
     }
 
     @Override
     public String toString() {
         return "Cell{" +
-                "count=" + count +
-                ", banknote=" + banknote +
+                "counter=" + counter +
+                ", denomination=" + denomination +
                 '}';
     }
 }
+

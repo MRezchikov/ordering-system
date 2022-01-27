@@ -1,64 +1,61 @@
 package com.mr.atmsimulator.atm.strategy;
 
+import com.mr.atmsimulator.atm.denomination.Denomination;
 import com.mr.atmsimulator.banknote.Banknote;
+import com.mr.atmsimulator.storage.Cell;
 import com.mr.atmsimulator.storage.MoneyStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static com.mr.atmsimulator.util.AtmUtil.getIntegerBanknoteMap;
 
 public class FirstGivingAlgorithm implements GivingAlgorithm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FirstGivingAlgorithm.class);
 
-    private final long moneyRequestedAmount;
     private final MoneyStorage moneyStorage;
 
-    public FirstGivingAlgorithm(long moneyRequestedAmount, MoneyStorage moneyStorage) {
-        this.moneyRequestedAmount = moneyRequestedAmount;
+    public FirstGivingAlgorithm(MoneyStorage moneyStorage) {
         this.moneyStorage = moneyStorage;
     }
 
     @Override
-    public List<Banknote> giveBanknotes() {
+    public Map<Banknote, Integer> giveBanknotes(long requestedCash) {
 
-        LOGGER.info("Giving banknotes: {}", moneyRequestedAmount);
+        LOGGER.info("Giving banknotes: {}", requestedCash);
 
-        if (moneyStorage.getBalanceCash() < moneyRequestedAmount) {
+        if (moneyStorage.getBalanceCash() < requestedCash) {
             LOGGER.error("Not enough money on your account {}: ", moneyStorage.getBalanceCash());
             throw new RuntimeException("Not enough money on your account " + moneyStorage.getBalanceCash());
         }
 
-        var moneyRemainder = moneyStorage.getBalanceCash() - moneyRequestedAmount;
+        var moneyRemainder = moneyStorage.getBalanceCash() - requestedCash;
         moneyStorage.setBalanceCash(moneyRemainder);
 
-        return processBanknotes(moneyRequestedAmount);
+        return processBanknotes(requestedCash);
     }
 
-    private List<Banknote> processBanknotes(long money) {
+    private Map<Banknote, Integer> processBanknotes(long money) {
 
-        var cells = getIntegerBanknoteMap();
+        Map<Banknote, Integer> banknotes = new LinkedHashMap<>();
 
-        List<Banknote> banknotes = new ArrayList<>();
+        final Map<Denomination, Cell> denominationCellMap = moneyStorage.getDenominationCellMap();
 
         var tempMoney = money;
 
-        for (Map.Entry<Integer, Banknote> entry : cells.entrySet()) {
+        for (Map.Entry<Denomination, Cell> entry : denominationCellMap.entrySet()) {
 
-            Integer denomination = entry.getKey();
-            var tookBanknoteDenomination = (int) (tempMoney - tempMoney % denomination);
-            var count = tookBanknoteDenomination / denomination;
-            if (count == 1) {
-                tookBanknoteDenomination = (int) (tempMoney - tempMoney % denomination);
-            } else if (count > 1) {
-                tookBanknoteDenomination /= count;
-            }
+            Integer denomination = entry.getKey().getValue();
+            var takenBanknoteDenomination = (int) (tempMoney - tempMoney % denomination);
+
+            var count = takenBanknoteDenomination / denomination;
+
+            Cell cell = entry.getValue();
+            cell.setCounter(cell.getCounter() - count);
+
             tempMoney %= denomination;
-            banknotes.add(new Banknote(count, tookBanknoteDenomination));
+            banknotes.put(new Banknote(entry.getKey()), count);
         }
 
         return banknotes;

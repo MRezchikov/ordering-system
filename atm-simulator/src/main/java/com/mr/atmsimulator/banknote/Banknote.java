@@ -1,24 +1,16 @@
 package com.mr.atmsimulator.banknote;
 
+import com.mr.atmsimulator.atm.denomination.Denomination;
+
 public class Banknote {
 
-    private long count;
-    private int denomination;
+    private Denomination denomination;
 
-    public Banknote(int denomination) {
+    public Banknote(Denomination denomination) {
         this.denomination = denomination;
     }
 
-    public Banknote(long count, int denomination) {
-        this.count = count;
-        this.denomination = denomination;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
-    public int getDenomination() {
+    public Denomination getDenomination() {
         return denomination;
     }
 
@@ -34,14 +26,13 @@ public class Banknote {
 
     @Override
     public int hashCode() {
-        return denomination;
+        return denomination.hashCode();
     }
 
     @Override
     public String toString() {
         return "Banknote{" +
-                "count=" + count +
-                ", denomination=" + denomination +
+                "denomination=" + denomination +
                 '}';
     }
 }

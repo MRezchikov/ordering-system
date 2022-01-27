@@ -1,35 +1,16 @@
 package com.mr.atmsimulator.atm;
 
-import com.mr.atmsimulator.atm.strategy.GivingAlgorithm;
-import com.mr.atmsimulator.atm.strategy.TakingAlgorithm;
+import com.mr.atmsimulator.atm.denomination.Denomination;
 import com.mr.atmsimulator.banknote.Banknote;
-import com.mr.atmsimulator.storage.MoneyStorage;
+import com.mr.atmsimulator.storage.Cell;
 
-import java.util.List;
+import java.util.Map;
 
-public class Atm {
+public interface Atm {
 
-    private final TakingAlgorithm takingAlgorithm;
-    private final GivingAlgorithm givingAlgorithm;
-    private final MoneyStorage moneyStorage;
+    Map<Denomination, Cell> takeBanknotes(Map<Banknote, Integer> banknotes);
 
-    public Atm(TakingAlgorithm takingAlgorithm,
-               GivingAlgorithm givingAlgorithm,
-               MoneyStorage moneyStorage) {
-        this.takingAlgorithm = takingAlgorithm;
-        this.givingAlgorithm = givingAlgorithm;
-        this.moneyStorage = moneyStorage;
-    }
+    Map<Banknote, Integer> giveBanknotes(long requestedCash);
 
-    public long takeBanknotes() {
-        return takingAlgorithm.takeBanknotes();
-    }
-
-    public List<Banknote> giveBanknotes() {
-        return givingAlgorithm.giveBanknotes();
-    }
-
-    public long getBalanceCash() {
-        return this.moneyStorage.getBalanceCash();
-    }
+    long getBalanceCash();
 }
