@@ -5,19 +5,22 @@ import com.mr.atmsimulator.banknote.Banknote;
 import com.mr.atmsimulator.storage.Cell;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class FirstTakingAlgorithm implements TakingAlgorithm {
 
     @Override
-    public Map<Denomination, Cell> processAcceptedBanknotes(Map<Banknote, Integer> banknotes) {
+    public Map<Denomination, Cell> processAcceptedBanknotes(Map<Banknote, Integer> banknotes,
+                                                            Map<Denomination, Cell> denominationCellMap) {
 
-        Map<Denomination, Cell> denominationCellMap = new TreeMap<>();
-
-        banknotes.forEach((key, value) -> {
-            Denomination denomination = key.getDenomination();
-            denominationCellMap.put(denomination, new Cell(value, denomination));
-        });
+        for (Map.Entry<Banknote, Integer> entry : banknotes.entrySet()) {
+            Banknote key = entry.getKey();
+            if (Objects.nonNull(key)) {
+                Cell cell = denominationCellMap.get(key.getDenomination());
+                cell.setCounter(cell.getCounter() + entry.getValue());
+            }
+        }
 
         return denominationCellMap;
     }

@@ -1,42 +1,27 @@
 package com.mr.atmsimulator.atm;
 
-import com.mr.atmsimulator.atm.denomination.Denomination;
 import com.mr.atmsimulator.atm.strategy.GivingAlgorithm;
-import com.mr.atmsimulator.atm.strategy.TakingAlgorithm;
 import com.mr.atmsimulator.banknote.Banknote;
-import com.mr.atmsimulator.storage.Cell;
 import com.mr.atmsimulator.storage.MoneyStorage;
 
 import java.util.Map;
 
+import static com.mr.atmsimulator.validation.BanknoteValidation.checkBanknoteAndReturnIncorrect;
+
 public class FirstAtm implements Atm {
 
-    private final TakingAlgorithm takingAlgorithm;
     private final GivingAlgorithm givingAlgorithm;
     private final MoneyStorage moneyStorage;
 
-    public FirstAtm(TakingAlgorithm takingAlgorithm,
-                    GivingAlgorithm givingAlgorithm,
+    public FirstAtm(GivingAlgorithm givingAlgorithm,
                     MoneyStorage moneyStorage) {
-        this.takingAlgorithm = takingAlgorithm;
         this.givingAlgorithm = givingAlgorithm;
         this.moneyStorage = moneyStorage;
     }
 
     @Override
-    public Map<Denomination, Cell> takeBanknotes(Map<Banknote, Integer> banknotes) {
-
-        Map<Denomination, Cell> denominationCellMap = takingAlgorithm.processAcceptedBanknotes(banknotes);
-        moneyStorage.setDenominationCellMap(denominationCellMap);
-
-        long sum = banknotes.entrySet().stream()
-                .mapToLong(entry -> (long) entry.getValue() * entry.getKey()
-                        .getDenomination()
-                        .getValue())
-                .sum();
-
-        moneyStorage.setBalanceCash(sum + moneyStorage.getBalanceCash());
-        return denominationCellMap;
+    public Map<Banknote, Integer> takeBanknotes(Map<Banknote, Integer> banknotes) {
+        return moneyStorage.takeBanknotes(banknotes);
     }
 
     @Override
@@ -46,6 +31,18 @@ public class FirstAtm implements Atm {
 
     @Override
     public long getBalanceCash() {
-        return this.moneyStorage.getBalanceCash();
+        return moneyStorage.getDenominationCellMap()
+                .values()
+                .stream()
+                .mapToLong(s -> s.getCounter() * s.getDenomination().getValue())
+                .sum();
+    }
+
+    @Override
+    public String toString() {
+        return "FirstAtm{" +
+                "givingAlgorithm=" + givingAlgorithm +
+                ", moneyStorage=" + moneyStorage +
+                '}';
     }
 }

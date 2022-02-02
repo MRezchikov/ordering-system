@@ -8,5 +8,6 @@ import java.util.Map;
 
 public interface TakingAlgorithm {
 
-    Map<Denomination, Cell> processAcceptedBanknotes(Map<Banknote, Integer> banknotes);
+    Map<Denomination, Cell> processAcceptedBanknotes(Map<Banknote, Integer> banknotes,
+                                                     Map<Denomination, Cell> denominationCellMap);
 }

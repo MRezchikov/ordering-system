@@ -7,8 +7,11 @@ import com.mr.atmsimulator.storage.MoneyStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FirstGivingAlgorithm implements GivingAlgorithm {
 
@@ -24,14 +27,6 @@ public class FirstGivingAlgorithm implements GivingAlgorithm {
     public Map<Banknote, Integer> giveBanknotes(long requestedCash) {
 
         LOGGER.info("Giving banknotes: {}", requestedCash);
-
-        if (moneyStorage.getBalanceCash() < requestedCash) {
-            LOGGER.error("Not enough money on your account {}: ", moneyStorage.getBalanceCash());
-            throw new RuntimeException("Not enough money on your account " + moneyStorage.getBalanceCash());
-        }
-
-        var moneyRemainder = moneyStorage.getBalanceCash() - requestedCash;
-        moneyStorage.setBalanceCash(moneyRemainder);
 
         return processBanknotes(requestedCash);
     }

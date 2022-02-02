@@ -1,7 +1,9 @@
 package com.mr.atmsimulator;
 
+import com.mr.atmsimulator.atm.Atm;
 import com.mr.atmsimulator.atm.FirstAtm;
 import com.mr.atmsimulator.atm.denomination.Denomination;
+import com.mr.atmsimulator.atm.savepoint.History;
 import com.mr.atmsimulator.atm.strategy.FirstGivingAlgorithm;
 import com.mr.atmsimulator.atm.strategy.FirstTakingAlgorithm;
 import com.mr.atmsimulator.atm.strategy.GivingAlgorithm;
@@ -28,8 +30,8 @@ public class AtmApplication {
 
     public static void main(String[] args) {
 
-        MoneyStorage moneyStorage = new MoneyStorage();
-        moneyStorage.setBalanceCash(1000_000L);
+        TakingAlgorithm takingAlgorithm = new FirstTakingAlgorithm();
+        MoneyStorage moneyStorage = new MoneyStorage(takingAlgorithm);
 
         var requestedCash = 116_870L;
 
@@ -42,13 +44,27 @@ public class AtmApplication {
         banknotes.put(new Banknote(FIFTY), 100);
         banknotes.put(new Banknote(TEN), 100);
 
-        TakingAlgorithm takingAlgorithm = new FirstTakingAlgorithm();
-
         GivingAlgorithm givingAlgorithm = new FirstGivingAlgorithm(moneyStorage);
 
-        FirstAtm firstAtm = new FirstAtm(takingAlgorithm, givingAlgorithm, moneyStorage);
+        FirstAtm firstAtm = new FirstAtm(givingAlgorithm, moneyStorage);
+        History history = new History();
+
+        LOGGER.info("Before save point {} ", firstAtm.getBalanceCash());
+
         firstAtm.takeBanknotes(banknotes);
         firstAtm.giveBanknotes(requestedCash);
-        firstAtm.getBalanceCash();
+
+        history.createSavePoint(firstAtm);
+        LOGGER.info("Save point created");
+        LOGGER.info("After save point {} ",firstAtm.getBalanceCash());
+
+        var requestedCash2 = 1000_000L;
+
+        firstAtm.giveBanknotes(requestedCash2);
+        LOGGER.info("Second state {}", firstAtm.getBalanceCash());
+        history.createSavePoint(firstAtm);
+        LOGGER.info("Second save point was created");
+        Atm atm = history.restoreAtm();
+        LOGGER.info("Restore atm to first state {} ", atm.getBalanceCash());
     }
 }

@@ -4,7 +4,7 @@ import com.mr.atmsimulator.atm.denomination.Denomination;
 
 public class Banknote {
 
-    private Denomination denomination;
+    private final Denomination denomination;
 
     public Banknote(Denomination denomination) {
         this.denomination = denomination;
