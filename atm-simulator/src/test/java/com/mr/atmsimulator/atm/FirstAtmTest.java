@@ -33,7 +33,7 @@ class FirstAtmTest {
 
     @BeforeEach
     void setUp() {
-        moneyStorage = new MoneyStorage(takingAlgorithm);
+/*        moneyStorage = new MoneyStorage(takingAlgorithm);
 
         banknotes = new TreeMap<>((k1, k2) ->
                 k2.getDenomination().getValue().compareTo(k1.getDenomination().getValue()));
@@ -46,7 +46,7 @@ class FirstAtmTest {
 
         takingAlgorithm = new FirstTakingAlgorithm();
         givingAlgorithm = new FirstGivingAlgorithm(moneyStorage);
-        firstAtm = new FirstAtm(givingAlgorithm, moneyStorage);
+        firstAtm = new FirstAtm(givingAlgorithm, moneyStorage);*/
     }
 
     @Test

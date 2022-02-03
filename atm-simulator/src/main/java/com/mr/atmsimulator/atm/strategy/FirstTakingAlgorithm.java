@@ -6,7 +6,6 @@ import com.mr.atmsimulator.storage.Cell;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 public class FirstTakingAlgorithm implements TakingAlgorithm {
 

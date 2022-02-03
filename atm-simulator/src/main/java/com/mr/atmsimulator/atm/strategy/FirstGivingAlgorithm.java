@@ -3,39 +3,27 @@ package com.mr.atmsimulator.atm.strategy;
 import com.mr.atmsimulator.atm.denomination.Denomination;
 import com.mr.atmsimulator.banknote.Banknote;
 import com.mr.atmsimulator.storage.Cell;
-import com.mr.atmsimulator.storage.MoneyStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class FirstGivingAlgorithm implements GivingAlgorithm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FirstGivingAlgorithm.class);
 
-    private final MoneyStorage moneyStorage;
-
-    public FirstGivingAlgorithm(MoneyStorage moneyStorage) {
-        this.moneyStorage = moneyStorage;
-    }
-
     @Override
-    public Map<Banknote, Integer> giveBanknotes(long requestedCash) {
+    public Map<Banknote, Integer> giveBanknotes(long requestedCash, Map<Denomination, Cell> denominationCellMap) {
 
         LOGGER.info("Giving banknotes: {}", requestedCash);
 
-        return processBanknotes(requestedCash);
+        return processBanknotes(requestedCash, denominationCellMap);
     }
 
-    private Map<Banknote, Integer> processBanknotes(long money) {
+    private Map<Banknote, Integer> processBanknotes(long money, Map<Denomination, Cell> denominationCellMap) {
 
         Map<Banknote, Integer> banknotes = new LinkedHashMap<>();
-
-        final Map<Denomination, Cell> denominationCellMap = moneyStorage.getDenominationCellMap();
 
         var tempMoney = money;
 

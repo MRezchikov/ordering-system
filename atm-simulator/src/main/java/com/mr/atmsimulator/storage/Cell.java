@@ -2,7 +2,7 @@ package com.mr.atmsimulator.storage;
 
 import com.mr.atmsimulator.atm.denomination.Denomination;
 
-public class Cell {
+public class Cell implements Cloneable {
 
     private long counter;
     private final Denomination denomination;
@@ -48,6 +48,10 @@ public class Cell {
                 "counter=" + counter +
                 ", denomination=" + denomination +
                 '}';
+    }
+
+    protected Cell clone() {
+        return new Cell(counter, denomination);
     }
 }
 
