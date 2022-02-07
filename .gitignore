@@ -6,3 +6,24 @@
 # Maven
 log/
 target/
+
+#Java
+*.class
+
+#Gradle
+.gradle
+
+build
+out
+
+/out/
+
+#Package Files
+*.jar
+*.war
+*.ear
+
+#Gradle-wrapper.jar
+!gradle-wrapper.jar
+
+*.log
