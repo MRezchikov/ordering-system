@@ -109,7 +109,11 @@ public class FirstAtm implements Atm {
             }
             if (listenerAttribute.getLowerLimit() >= eventData.getBalanceCash()) {
                 LOGGER.info("Notify the listeners");
-                listener.onBalanceLow(eventData);
+                try{
+                    listener.onBalanceLow(eventData);
+                } catch (Exception e) {
+                    LOGGER.error("Some error was happen ", e);
+                }
                 listenerAttribute.setStopNotificationFlag(true);
             }
         });
