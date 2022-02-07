@@ -57,20 +57,11 @@ public class AtmApplication {
 
         firstAtm.takeBanknotes(banknotes);
 
-        /*LOGGER.info("First savepoint was created");
-
         var requestedCash2 = 1_000_000L;
-
-        LOGGER.info("Before second savepoint {}", firstAtm.getBalanceCash());
-
-        LOGGER.info("Second save point was created");
 
         var requestedCash3 = 2_584_180L;
 
-        LOGGER.info("Before third savepoint {}", firstAtm.getBalanceCash());
-
-        LOGGER.info("Third save point was created");
-
+        // For one atm
         ConsumerA consumerA = new ConsumerA(1L);
         ConsumerB consumerB = new ConsumerB(2L);
         ConsumerC consumerC = new ConsumerC(3L);
@@ -88,8 +79,6 @@ public class AtmApplication {
             i++;
         }
 
-        LOGGER.info("MONEY IS OUT!!!");
-
         Map<Banknote, Integer> banknotes2 = new TreeMap<>((k1, k2) ->
                 k2.getDenomination().getValue().compareTo(k1.getDenomination().getValue()));
         banknotes2.put(new Banknote(FIVE_THOUSAND), 1000);
@@ -100,13 +89,15 @@ public class AtmApplication {
         banknotes2.put(new Banknote(TEN), 100);
 
         firstAtm.takeBanknotes(banknotes2);
-        LOGGER.info("CASH {}", firstAtm.getBalanceCash());*/
+        LOGGER.info("CASH {}", firstAtm.getBalanceCash());
 
-/*        int i1 = 0;
+       int i1 = 0;
         while (i1 < 8) {
             firstAtm.giveBanknotes(requestedCash2);
             i1++;
-        }*/
+        }
+
+        // For atm group
 
         AtmGroup atmGroup = new AtmGroup();
         atmGroup.addAtm(new FirstAtm(moneyStorage));
@@ -115,7 +106,11 @@ public class AtmApplication {
         atmGroup.addAtm(new FirstAtm(moneyStorage));
         atmGroup.addAtm(new FirstAtm(moneyStorage));
 
+        //Add cash for all atm
+
         atmGroup.addCashToEachAtm();
+
+        //Execute commands
 
         atmGroup.getAtmGroup().forEach(atm -> {
             Executor executor = new Executor(atm);
@@ -125,6 +120,5 @@ public class AtmApplication {
             executor.addCommand(new RestoreStateCommand());
             executor.executeCommands();
         });
-
     }
 }
