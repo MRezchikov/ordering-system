@@ -1,7 +1,9 @@
 package com.mr.atmsimulator.atm;
 
+import com.mr.atmsimulator.atm.data.ListenerAttribute;
 import com.mr.atmsimulator.atm.data.EventData;
 import com.mr.atmsimulator.atm.observer.Listener;
+import com.mr.atmsimulator.atm.savepoint.History;
 import com.mr.atmsimulator.banknote.Banknote;
 
 import java.util.Map;
@@ -16,11 +18,13 @@ public interface Atm extends Cloneable {
 
     Atm clone();
 
-    void addListener(Listener listener);
+    void addListener(Listener listener, ListenerAttribute listenerAttribute);
 
     void removeListener(Listener listener);
 
     void notifyListeners(EventData eventData);
 
     void setOnline(boolean online);
+
+    History getHistory();
 }

@@ -19,6 +19,7 @@ public class History {
     }
 
     public void createSavePoint(Atm atm) {
+        LOGGER.info("Save point was created at {}", dataTimeProvider.getDate());
         Memento memento = new Memento(atm, dataTimeProvider.getDate());
         history.push(memento);
     }

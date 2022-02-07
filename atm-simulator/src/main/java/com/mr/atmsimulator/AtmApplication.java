@@ -1,11 +1,16 @@
 package com.mr.atmsimulator;
 
-import com.mr.atmsimulator.atm.Atm;
 import com.mr.atmsimulator.atm.FirstAtm;
+import com.mr.atmsimulator.atm.command.BalanceCashCommand;
+import com.mr.atmsimulator.atm.command.OfflineCommand;
+import com.mr.atmsimulator.atm.command.OnlineCommand;
+import com.mr.atmsimulator.atm.command.RestoreStateCommand;
+import com.mr.atmsimulator.atm.command.executor.Executor;
+import com.mr.atmsimulator.atm.data.ListenerAttribute;
+import com.mr.atmsimulator.atm.group.AtmGroup;
 import com.mr.atmsimulator.atm.observer.ConsumerA;
 import com.mr.atmsimulator.atm.observer.ConsumerB;
 import com.mr.atmsimulator.atm.observer.ConsumerC;
-import com.mr.atmsimulator.atm.savepoint.History;
 import com.mr.atmsimulator.atm.strategy.FirstGivingAlgorithm;
 import com.mr.atmsimulator.atm.strategy.FirstTakingAlgorithm;
 import com.mr.atmsimulator.atm.strategy.GivingAlgorithm;
@@ -15,7 +20,6 @@ import com.mr.atmsimulator.storage.MoneyStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -48,56 +52,79 @@ public class AtmApplication {
         banknotes.put(new Banknote(TEN), 100);
 
         FirstAtm firstAtm = new FirstAtm(moneyStorage);
-        History history = new History(LocalDateTime::now);
-
-        history.createSavePoint(firstAtm);
 
         LOGGER.info("Before first save point {} ", firstAtm.getBalanceCash());
 
         firstAtm.takeBanknotes(banknotes);
-        firstAtm.giveBanknotes(requestedCash);
 
-        history.createSavePoint(firstAtm);
-        LOGGER.info("First savepoint was created");
+        /*LOGGER.info("First savepoint was created");
 
         var requestedCash2 = 1_000_000L;
 
-        firstAtm.giveBanknotes(requestedCash2);
         LOGGER.info("Before second savepoint {}", firstAtm.getBalanceCash());
 
-        history.createSavePoint(firstAtm);
         LOGGER.info("Second save point was created");
 
         var requestedCash3 = 2_584_180L;
-        firstAtm.giveBanknotes(requestedCash3);
+
         LOGGER.info("Before third savepoint {}", firstAtm.getBalanceCash());
 
-        history.createSavePoint(firstAtm);
         LOGGER.info("Third save point was created");
 
-        Atm atm = history.restoreAtm();
-        LOGGER.info("Restore atm from third STATE = {} ", atm.getBalanceCash());
-        Atm atm1 = history.restoreAtm();
-        LOGGER.info("Restore atm from second STATE = {} ", atm1.getBalanceCash());
-        Atm atm2 = history.restoreAtm();
-        LOGGER.info("Restore atm from first STATE = {} ", atm2.getBalanceCash());
-        Atm atm3 = history.restoreAtm();
-        LOGGER.info("Restore atm from zero STATE = {} ", atm3.getBalanceCash());
+        ConsumerA consumerA = new ConsumerA(1L);
+        ConsumerB consumerB = new ConsumerB(2L);
+        ConsumerC consumerC = new ConsumerC(3L);
+        ListenerAttribute listenerAttribute1 = new ListenerAttribute(100_000L, 200_000L);
+        ListenerAttribute listenerAttribute2 = new ListenerAttribute(200_000L, 300_000L);
+        ListenerAttribute listenerAttribute3 = new ListenerAttribute(300_000L, 400_000L);
 
-        ConsumerA consumerA = new ConsumerA();
-        ConsumerB consumerB = new ConsumerB();
-        ConsumerC consumerC = new ConsumerC();
-
-        firstAtm.addListener(consumerA);
-        firstAtm.addListener(consumerB);
-        firstAtm.addListener(consumerC);
+        firstAtm.addListener(consumerA, listenerAttribute1);
+        firstAtm.addListener(consumerB, listenerAttribute2);
+        firstAtm.addListener(consumerC, listenerAttribute3);
 
         int i = 0;
-        while (i < 10) {
+        while (i < 8) {
             firstAtm.giveBanknotes(requestedCash2);
             i++;
         }
 
         LOGGER.info("MONEY IS OUT!!!");
+
+        Map<Banknote, Integer> banknotes2 = new TreeMap<>((k1, k2) ->
+                k2.getDenomination().getValue().compareTo(k1.getDenomination().getValue()));
+        banknotes2.put(new Banknote(FIVE_THOUSAND), 1000);
+        banknotes2.put(new Banknote(ONE_THOUSAND), 100);
+        banknotes2.put(new Banknote(FIVE_HUNDRED), 100);
+        banknotes2.put(new Banknote(ONE_HUNDRED), 100);
+        banknotes2.put(new Banknote(FIFTY), 100);
+        banknotes2.put(new Banknote(TEN), 100);
+
+        firstAtm.takeBanknotes(banknotes2);
+        LOGGER.info("CASH {}", firstAtm.getBalanceCash());*/
+
+/*        int i1 = 0;
+        while (i1 < 8) {
+            firstAtm.giveBanknotes(requestedCash2);
+            i1++;
+        }*/
+
+        AtmGroup atmGroup = new AtmGroup();
+        atmGroup.addAtm(new FirstAtm(moneyStorage));
+        atmGroup.addAtm(new FirstAtm(moneyStorage));
+        atmGroup.addAtm(new FirstAtm(moneyStorage));
+        atmGroup.addAtm(new FirstAtm(moneyStorage));
+        atmGroup.addAtm(new FirstAtm(moneyStorage));
+
+        atmGroup.addCashToEachAtm();
+
+        atmGroup.getAtmGroup().forEach(atm -> {
+            Executor executor = new Executor(atm);
+            executor.addCommand(new OnlineCommand());
+            executor.addCommand(new OfflineCommand());
+            executor.addCommand(new BalanceCashCommand());
+            executor.addCommand(new RestoreStateCommand());
+            executor.executeCommands();
+        });
+
     }
 }
