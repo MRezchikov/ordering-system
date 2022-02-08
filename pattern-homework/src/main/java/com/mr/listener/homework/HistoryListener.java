@@ -3,17 +3,27 @@ package com.mr.listener.homework;
 import com.mr.listener.Listener;
 import com.mr.model.Message;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class HistoryListener implements Listener, HistoryReader {
 
+    private final List<Message> messages = new ArrayList<>();
+
     @Override
     public void onUpdated(Message msg) {
-        throw new UnsupportedOperationException();
+        Message clone = msg.clone();
+        messages.add(clone);
     }
 
     @Override
     public Optional<Message> findMessageById(long id) {
-        throw new UnsupportedOperationException();
+        return messages.stream()
+                .filter(message -> message.getId() == id)
+                .findFirst();
     }
 }

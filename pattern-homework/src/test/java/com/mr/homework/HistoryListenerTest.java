@@ -2,11 +2,10 @@ package com.mr.homework;
 
 
 import com.mr.listener.homework.HistoryListener;
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import com.mr.model.Message;
 import com.mr.model.ObjectForMessage;
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
@@ -15,7 +14,6 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 class HistoryListenerTest {
 
     @Test
-    @Disabled //надо удалить
     void listenerTest() {
         //given
         var historyListener = new HistoryListener();
@@ -29,17 +27,25 @@ class HistoryListenerTest {
 
         var message = new Message.Builder(id)
                 .field10("field10")
-//TODO: раскоментировать       .field13(field13)
+                .field13(field13)
                 .build();
 
         //when
         historyListener.onUpdated(message);
-//TODO: раскоментировать        message.getField13().setData(new ArrayList<>()); //меняем исходное сообщение
-//TODO: раскоментировать        field13Data.clear(); //меняем исходный список
+        message.getField13().setData(new ArrayList<>());
+        field13Data.clear();
+        message.toBuilder()
+                .field10("test message")
+                .build();
 
         //then
         var messageFromHistory = historyListener.findMessageById(id);
         AssertionsForClassTypes.assertThat(messageFromHistory).isPresent();
-//TODO: раскоментировать        assertThat(messageFromHistory.get().getField13().getData()).containsExactly(data);
+
+        Message expectedMessage = messageFromHistory.get();
+        ObjectForMessage expectedObjectForMessage = expectedMessage.getField13();
+
+        assertThat(expectedObjectForMessage.getData()).containsExactly(data);
+        assertThat(expectedMessage.getField10()).isEqualTo("field10");
     }
 }
