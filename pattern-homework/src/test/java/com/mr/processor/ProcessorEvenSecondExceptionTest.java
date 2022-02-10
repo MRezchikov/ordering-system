@@ -21,7 +21,7 @@ class ProcessorEvenSecondExceptionTest {
 
         //when
         ProcessorEvenSecondException processor = new ProcessorEvenSecondException(()
-                -> LocalDateTime.of(2022, Month.FEBRUARY, 8, 8, 00, 18));
+                -> LocalDateTime.of(2022, Month.FEBRUARY, 8, 8, 0, 18));
 
         //then
         assertThrows(EvenSecondException.class, () -> processor.process(message));
@@ -36,7 +36,7 @@ class ProcessorEvenSecondExceptionTest {
 
         //when
         ProcessorEvenSecondException processor = new ProcessorEvenSecondException(()
-                -> LocalDateTime.of(2022, Month.FEBRUARY, 8, 8, 00, 19));
+                -> LocalDateTime.of(2022, Month.FEBRUARY, 8, 8, 0, 19));
 
 
         Message expected = processor.process(actual);
