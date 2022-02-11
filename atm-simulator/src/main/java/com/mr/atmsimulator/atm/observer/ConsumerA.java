@@ -8,12 +8,19 @@ public class ConsumerA implements Listener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerA.class);
 
-    private static final long LOWER_LIMIT = 100_000L;
+    private final long id;
+
+    public ConsumerA(long id) {
+        this.id = id;
+    }
+
+    @Override
+    public long getId() {
+        return id;
+    }
 
     @Override
     public void onBalanceLow(EventData eventData) {
-        if (LOWER_LIMIT >= eventData.getBalanceCash()) {
-            LOGGER.info("Print money and put in the atm");
-        }
+        LOGGER.info("ConsumerA Print money and put in the atm {} ", eventData.getBalanceCash());
     }
 }
