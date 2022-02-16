@@ -26,7 +26,7 @@ public class Robot {
 
         @Override
         public void run() {
-            while(true) {
+            while(!Thread.currentThread().isInterrupted()) {
                 if (leg == currentLeg) {
                     System.out.println(name);
                     currentLeg = !leg;
