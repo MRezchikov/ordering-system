@@ -3,4 +3,5 @@ rootProject.name = 'order-system'
 include 'ordering-system'
 include 'atm-simulator'
 include 'pattern-homework'
+include 'di-homework'
 
