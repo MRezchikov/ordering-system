@@ -4,5 +4,6 @@ include 'ordering-system'
 include 'atm-simulator'
 include 'pattern-homework'
 include 'concurrency'
+include 'di-homework'
 include 'ordering-system-spring'
 
